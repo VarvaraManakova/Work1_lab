@@ -7,33 +7,28 @@ using namespace std;
 // ОСНОВНОЙ КЛАСС
 class BaseQueue
 {
-private:
-    BaseQueue *next;
-    BaseQueue *previous;
-    BaseQueue *head;
-
 public:
-// создание конструкторов и деструктора
-    BaseQueue(); // конструктор по умолчанию
-    BaseQueue(BaseQueue *ptr); // конструктор с параметром
-    BaseQueue(const BaseQueue &B); // конструктор копирования
-    ~BaseQueue(); // деструктор
+// // создание конструкторов и деструктора
+//     BaseQueue(); // конструктор по умолчанию
+//     BaseQueue(BaseQueue *ptr); // конструктор с параметром
+//     BaseQueue(const BaseQueue &B); // конструктор копирования
+//     ~BaseQueue(); // деструктор
 
 // основные методы
-    void Set(int number); // добавить элемент
-    void Get(); // получить элемент
-    void Delete(int choice); // удалить элемент
-    void Change(int choice); // изменить данные
+    virtual void Set() = 0; // добавить элемент
+    virtual void Get() = 0; // получить элемент
+    virtual void Pop() = 0; // удалить элемент
+    virtual void isEmpty() = 0; // проверить на пустоту
 
 };
+
+class NodeList; // узел для листа
 
 class List:public BaseQueue
 {
 private:
-    List *next; // следущий элемент
-    List *previous; // предыдущий элемент
-    List *head; // текущий элемент
-    float number; // число
+    NodeList *head; // указатель на начало списка
+    NodeList *tail; // указатель, чтобы бегать по списку
 
 public:
 // создание конструкторов и деструктора
@@ -43,43 +38,61 @@ public:
     ~List(); // деструктор
 
 // основные методы
-    void Set(float number); // добавить число
-    void Get(); // получить число
-    void Pop(); // удалить число
-    int Size(); // узнать размер
+    void Set() override; // добавить число
+    void Get() override; // получить список
+    void Pop() override; // удалить число
+    void isEmpty() override; // узнать размер
 };
 
-class SoundBoard:public BaseQueue
+class NodeList:public List
+{
+public:
+    float number; // число
+    NodeList *next; // указатель на следующий объект
+
+    NodeList(float number); // конструктор с параметром
+};
+
+class NodeDeque; // узел для деки
+
+class Deque:public BaseQueue
 {
 private:
-    SoundBoard *next; // следущий элемент
-    SoundBoard *previous; // предыдущий элемент
-    SoundBoard *head; // текущий элемент
-    SoundBoard *back_head; // конечный элемент
-    float number; // число
+    NodeDeque *head; // указатель на голову
+    NodeDeque *Ltail; // указатель на начало
+    NodeDeque *Rtail; // указатель на конец
 
 public:
 // создание конструкторов и деструктора
-    SoundBoard(); // конструктор по умолчанию
-    SoundBoard(float number); // конструктор с параметром
-    SoundBoard(const SoundBoard &S); // конструктор копирования
-    ~SoundBoard(); // деструктор
+    Deque(); // конструктор по умолчанию
+    Deque(float number); // конструктор с параметром
+    Deque(const Deque &D); // конструктор копирования
+    ~Deque(); // деструктор
 
 // основные методы
-    void SetHead(float number); // добавить число в начало
-    void SetBack(float number); // добавить число в конец
-    void Get(); // получить число
-    void PopHead(); // удалить число с начала
-    void PopBack(); // удалить число с конца
-    int Size(); // узнать размер
+    void Set() override; // добавить число
+    void Get() override; // получить деку
+    void Pop() override; // удалить число
+    void isEmpty() override; // узнать размер
 };
+
+class NodeDeque:public Deque
+{
+public:
+    NodeDeque *previous; // указатель на предыдущий элемент
+    float number; // переменная для хранения числа
+
+    NodeDeque(float number);
+};
+
+class NodeStack; // класс узла Stack
 
 class Stack:public BaseQueue
 {
-    private:
-    SoundBoard *previous; // предыдущий элемент
-    SoundBoard *head; // текущий элемент
-    float number; // число
+private:
+    NodeStack *head; // указатель на начало стека
+    NodeStack *tail; // указатель на конец стека
+    int count_elements;
 
 public:
 // создание конструкторов и деструктора
@@ -89,10 +102,19 @@ public:
     ~Stack(); // деструктор
 
 // основные методы
-    void Set(float number); // добавить число
-    void Get(); // получить число
-    void Pop(); // удалить число
-    int Size(); // узнать размер
+    void Set() override; // добавить число
+    void Get() override; // получить стек
+    void Pop() override; // удалить число
+    void isEmpty() override; // узнать размер
+};
+
+class NodeStack:public Stack
+{
+public:
+    NodeStack *previous; // указатель на предыдущий элемент стека
+    float number; // значение числа
+
+    NodeStack(float number); // конструктор с параметром
 };
 
 #endif

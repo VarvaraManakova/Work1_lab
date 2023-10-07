@@ -1,22 +1,28 @@
 #ifndef KEEPER_H
 #define KEEPER_H
 
+#include "Base.h"
+
 class Keeper
 {
 private:
-    Keeper *array;
+    BaseQueue **array; // массив для хранения объектов
+    int size; // размер массива
+    int countElement; // кол-во элементов в массиве
 
 public:
 // создание конструкторов и деструктора
-    Keeper();
-    Keeper(int size);
-    Keeper(const Keeper &K);
-    ~Keeper();
+    Keeper(); // конструктор без параметра
+    Keeper(int size); // конструктор с параметром
+    Keeper(const Keeper &K); // конструктор копирования
+    ~Keeper(); // деструктор
 
 // основные методы
     void Set(); // добавить элемент
     void Get(); // получить элемент
-    void Delete(); // удалить элемент
+    void Pop(); // удалить элемент
+    void Change(); // изменить данные
+    void isEmpty(); // узнать данные
     void Save(); // сохранить данные в файл
     void Load(); // загрузить данные из файла
 };
