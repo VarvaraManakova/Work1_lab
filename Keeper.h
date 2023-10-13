@@ -21,6 +21,8 @@ public:
     void Set(); // добавить элемент
     void Get(); // получить элемент
     void Pop(); // удалить элемент
+    Keeper&operator-=(int element); // перегрузка оператора -=
+    void PopElement(); // удаление значения из типов данных
     void Change(); // изменить данные
     void isEmpty(); // узнать данные
     void Save(); // сохранить данные в файл

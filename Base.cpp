@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "Base.h"
 
 using namespace std;
@@ -19,6 +21,7 @@ List::List()
 {
     this->head = nullptr; // устанавливаем указатель в пустоту, так как нет значения
     this->tail = nullptr; // устанавливаем указатель в пустоту, так как нет значения
+    this->countEl = 0;
 
     cout << "Вызван конструктор без параметра класса: List" << endl;
 }
@@ -31,6 +34,7 @@ List::List(float number)
     this->head = node; // устанавливаем указатель начала списка на созданный узел
     this->tail = node; // указатель на конец списка
     this->tail->next = nullptr; // следующий элемент
+    this->countEl = 1;
 
     cout << "Вызван конструктор с параметром класса: List" << endl;
 }
@@ -42,6 +46,7 @@ List::List(const List &L)
 
     this->head = nullptr; // устанвливаем указатели в nullptr
     this->tail = nullptr; // устанвливаем указатели в nullptr
+    this->countEl = L.countEl;
 
     // проходимся по всем элементам
     while (buf_head != nullptr)
@@ -75,7 +80,7 @@ List::~List()
     while (this->head != nullptr)
     {
         head = head->next; // двигаем головной указатель на следующий элемент
-        delete [] buf_head; // удаляем предыдущий элемент
+        delete buf_head; // удаляем предыдущий элемент
         buf_head = head;
     }
 
@@ -86,19 +91,32 @@ List::~List()
 void List::Set()
 {
     cout << "Введите число: ";
-    float num; // переменная для ввода числа
+    string num; // переменная для ввода числа
 
     // проверка на ввод числа
     try
     {
         cin >> num; // ввод числа
+        for (int i = 0; i < num.length(); i++)
+        {
+            if ((num[i] >= 'A' and num[i] <= 'Z') or(num[i] >= 'a' and num[i] <= 'a'))
+            {
+                throw "Error";
+            }
+        }
     }
     catch(const std::exception& e) // если число некорректно
     {
         cout << "Число некорректно" << endl;
+        exit(1);
+    }
+    catch(const char*mssg) // если число некорректно
+    {
+        cout << "Число некорректно" << endl;
+        exit(1);
     }
 
-    NodeList *node = new NodeList(num); // создаем новый узел со значением
+    NodeList *node = new NodeList(stof(num)); // создаем новый узел со значением
 
     // если элемент есть в списке
    if (this->tail != nullptr)
@@ -113,6 +131,7 @@ void List::Set()
     }
 
     this->tail = node; // двигаем указатель на конец на новый добавленный элемент
+    this->countEl++;
 }
 
 // метод вывода на экран
@@ -120,7 +139,7 @@ void List::Get()
 {
     NodeList *buf_head = this->head; // устанавливаем буферный указатель на начало списка
 
-    cout << "Элементы списка:" << endl;
+    cout << "\nЭлементы списка:" << endl;
 
     while (buf_head != nullptr) // пока не конец списка
     {
@@ -132,40 +151,18 @@ void List::Get()
 // метод удаления
 void List::Pop()
 {
-    cout << "Введите номер элемента, который вы хотите удалить: ";
-    int id; // переменная для хранеения номер
-
-    // попытка ввода
-    try
+    if (countEl == 0)
     {
-        cin >> id;
-
-        if (id < 1) throw "Error"; // если номер < 1 - ошибка
-    }
-    catch(const std::exception& e)
-    {
-        cout << "Некорректный ввод" << endl;
-    }
-    catch(const char*mssg)
-    {
-        cout << "Номер введен неверно" << endl;
+        cout << "\n СПИСОК ПУСТ" << endl;
     }
 
-    int id_count = 1; // переменная для нахождения элемента
-    NodeList *buf_head = this->head; // устанавливаем указатель на начало очереди
-
-    // ищем нужный элемент
-    while (id_count < id-1)
+    else
     {
-        id_count++; // увеличиваем счетчик
-        buf_head = buf_head->next; // двигаемся на след. элемент
+        NodeList *buf_head = head;
+        head = buf_head->next;
+        delete buf_head;
+        countEl--;
     }
-
-    NodeList *delete_node = buf_head->next; // устанавливаем указатель на элемент, который надо удалить
-    NodeList *buf_next = delete_node->next; // устанавливаем указатель на элемент, на который указывает удаляемый
-
-    buf_head->next = buf_next; // предыдущий элемент указывает на элемент, на который указывал удаляемый
-    delete [] delete_node; // удаляем нужный элемент
 }
 
 // проверка на пустоту списка
@@ -178,7 +175,7 @@ void List::isEmpty()
 
     else
     {
-        cout << "В списке есть элементы" << endl;
+        cout << "В списке есть элементы в кол-ве: " << countEl << endl;
     }
 }
 
@@ -199,6 +196,7 @@ Deque::Deque()
     this->head = nullptr; // устанавливаем указатель в пустоту, так как нет значения
     this->Ltail = nullptr; // устанавливаем указатель в пустоту, так как нет значения
     this->Rtail = nullptr; // устанавливаем указатель в пустоту, так как нет значения
+    this->countEl = 0;
 
     cout << "Вызван конструктор без параметра класса: Deque" << endl;
 }
@@ -211,6 +209,7 @@ Deque::Deque(float number)
     this->head = node; // устанавливаем указатель начала деки на созданный узел
     this->Ltail = node; // указатель на неачало деки
     this->Rtail = node; // указатель на конец деки
+    this->countEl = 1;
 
     cout << "Вызван конструктор с параметром класса: Deque" << endl;
 }
@@ -223,6 +222,7 @@ Deque::Deque(const Deque &D)
     this->head = nullptr; // устанвливаем указатели в nullptr
     this->Ltail = nullptr; // устанвливаем указатели в nullptr
     this->Rtail = nullptr; // устанвливаем указатели в nullptr
+    this->countEl = D.countEl;
 
     // проходимся по всем элементам
     while (buf_head != nullptr)
@@ -255,7 +255,7 @@ Deque::~Deque()
     {
         NodeDeque*buf_head = head; // создаем буферный указатель, чтобы удалить данные
         head = head->previous; // двигаем головной указатель на следующий элемент
-        delete [] buf_head; // удаляем предыдущий элемент
+        delete buf_head; // удаляем предыдущий элемент
     }
 
     cout << "Вызван деструктор класса: Deque" << endl;
@@ -265,41 +265,56 @@ Deque::~Deque()
 void Deque::Set()
 {
     cout << "Введите число: ";
-    float num; // переменная для ввода числа
+    string num; // переменная для ввода числа
 
     // проверка на ввод числа
     try
     {
         cin >> num; // ввод числа
+        for (int i = 0; i < num.length(); i++)
+        {
+            if ((num[i] >= 'A' and num[i] <= 'Z') or(num[i] >= 'a' and num[i] <= 'a'))
+            {
+                throw "Error";
+            }
+        }
     }
     catch(const std::exception& e) // если число некорректно
     {
         cout << "Число некорректно" << endl;
+        exit(1);
+    }
+    catch(const char**mssg) // если число некорректно
+    {
+        cout << "Число некорректно" << endl;
+        exit(1);
     }
 
     cout << "Куда добавить элемент?" << endl;
-    cout << "Введите + если в начало"
+    cout << "Введите + если в начало \n"
         << "Введите - если в конец" << endl;
 
-    char symbol; // переменная для ввода выбора
+    string symbol; // переменная для ввода выбора
     try
     {
         cin >> symbol; // ввод
-        if (symbol != '+' or symbol != '-') throw "Error";
+        if (symbol != "+" and symbol != "-") throw "Error";
     }
     catch(const std::exception& e)
     {
         cout << "Ошибка ввода" << endl;
+        exit(1);
     }
     catch(const char*mssg)
     {
         cout << "Выбор не верный" << endl;
+        exit(1);
     }
 
     // добавление в конец деки
-    if (symbol == '-')
+    if (symbol == "-")
     {
-        NodeDeque *node = new NodeDeque(num); // создаем новый узел со значением
+        NodeDeque *node = new NodeDeque(stof(num)); // создаем новый узел со значением
 
         // если элемент есть в списке
         if (this->Rtail != nullptr)
@@ -319,24 +334,25 @@ void Deque::Set()
     // если добавление в начало
     else
     {
-        NodeDeque *node = new NodeDeque(num); // создаем новый узел со значением
+        NodeDeque *node = new NodeDeque(stof(num)); // создаем новый узел со значением
 
         // если указатель на начало указывает на элемент
         if (Ltail != nullptr)
         {
             this->Ltail = node; // указатель на начало устанавливаем на новый элемент
             this->Ltail->previous = head; // новый начальный элемент будет указывать на прошлый начальный
-            this->head = node; // сдвигаем голову на новый начальный элемент
         }
 
         // если еще нет элементов
         if (head == nullptr)
         {
-            this->head = node; // голова на новый элемент
             this->Rtail = node; // указатель на конец на новый элемент
             this->Ltail = node; // указатель на начало на новый элемент
         }
+
+        this->head = node; // сдвигаем голову на новый начальный элемент
     }
+    this->countEl++;
 }
 
 // метод вывода деки
@@ -344,7 +360,7 @@ void Deque::Get()
 {
     NodeDeque *buf_head = this->head; // устанавливаем буферный указатель на начало списка
 
-    cout << "Элементы деки:" << endl;
+    cout << "\nЭлементы деки:" << endl;
 
     while (buf_head != nullptr) // пока не конец списка
     {
@@ -356,78 +372,59 @@ void Deque::Get()
 // удаление элементов
 void Deque::Pop()
 {
-    cout << "Введите номер элемента, который вы хотите удалить: ";
-    int id; // переменная для хранеения номер
-
-    // попытка ввода
-    try
-    {
-        cin >> id;
-
-        if (id < 1) throw "Error"; // если номер < 1 - ошибка
-    }
-    catch(const std::exception& e)
-    {
-        cout << "Некорректный ввод" << endl;
-    }
-    catch(const char*mssg)
-    {
-        cout << "Номер введен неверно" << endl;
-    }
-
     cout << "Откуда удалить элемент?" << endl;
-    cout << "Введите + если из начала"
+    cout << "Введите + если из начала \n"
         << "Введите - если из конца" << endl;
 
-    char symbol; // переменная для ввода выбора
+    string symbol; // переменная для ввода выбора
     try
     {
         cin >> symbol; // ввод
-        if (symbol != '+' or symbol != '-') throw "Error";
+        if (symbol != "+" and symbol != "-") throw "Error";
     }
     catch(const std::exception& e)
     {
         cout << "Ошибка ввода" << endl;
+        exit(1);
     }
     catch(const char*mssg)
     {
         cout << "Выбор не верный" << endl;
+        exit(1);
     }
 
     // если из начала
-    if (symbol == '+')
+    if (symbol == "+")
     {
         NodeDeque *buf_head = head; // создаем буферный указатель на начало
 
         head = buf_head->previous; // перемещаем на следущий элемент указатель на голову
         Ltail = buf_head->previous; // перемещаем на следующий элемент указатель на начало
 
-        delete [] buf_head; // удаляем
+        delete buf_head; // удаляем
     }
 
     // если из конца
     else
     {
-        NodeDeque *buf_Rtail = head; // буферный указатель на начало
-
-        // перебираем все элементы до конечного - 1
-        while (buf_Rtail < Rtail)
+        if (Rtail == nullptr)  cout << "\nДека пуста" << endl; // если нет элементов
+        else
         {
-            // если текущий указатель на следующий элемент не указывает на конец, то двигаем указатель
-            if (buf_Rtail->previous != Rtail)
-            {
-                buf_Rtail = buf_Rtail->previous;
-            }
-            //иначе прекращаем цикл
-            else
-            {
-                break;
-            }
-        }
+            NodeDeque *buf_tail = head; // создаем буферный указатель начала
 
-        delete [] Rtail;
-        Rtail = buf_Rtail;
+            while (buf_tail != Rtail) // идем до конца - 1
+            {
+                if (buf_tail->previous != Rtail) buf_tail = buf_tail->previous; // находим предпоследний элемент
+                else break;
+            }
+
+            NodeDeque *buf_delete = Rtail; // создаем буфер на конец
+            Rtail = buf_tail; // перемещаем указатель назад
+            Rtail->previous = nullptr; // устанавливаем указатель на след в nullptr
+            delete buf_delete; // удаляем старый элемент
+        }
     }
+    this->countEl--;
 }
 
 // проверка на пустоту списка
@@ -440,7 +437,7 @@ void Deque::isEmpty()
 
     else
     {
-        cout << "В деке есть элементы" << endl;
+        cout << "В деке есть элементы в кол-ве: " << this->countEl << endl;
     }
 }
 
@@ -530,7 +527,7 @@ Stack::~Stack()
     {
         NodeStack *buf_head = this->head; // создаем буферный указатель
         this->head = this->head->previous; // двигаем начало дальше
-        delete [] buf_head; // удалаяем элементы
+        delete buf_head; // удалаяем элементы
     }
 }
 
@@ -538,19 +535,32 @@ Stack::~Stack()
 void Stack::Set()
 {
     cout << "Введите число: ";
-    float num; // переменная для ввода числа
+    string num; // переменная для ввода числа
 
     // проверка на ввод числа
     try
     {
         cin >> num; // ввод числа
+        for (int i = 0; i < num.length(); i++)
+        {
+            if ((num[i] >= 'A' and num[i] <= 'Z') or(num[i] >= 'a' and num[i] <= 'a'))
+            {
+                throw "Error";
+            }
+        }
     }
     catch(const std::exception& e) // если число некорректно
     {
         cout << "Число некорректно" << endl;
+        exit(1);
+    }
+    catch(const char*mssg) // если число некорректно
+    {
+        cout << "Число некорректно" << endl;
+        exit(1);
     }
 
-    NodeStack *node = new NodeStack(num); // создаем элемент
+    NodeStack *node = new NodeStack(stof(num)); // создаем элемент
     NodeStack *buf_head = this->head; // создаем буфер на начало
 
     // если уже есть элементы
@@ -575,7 +585,7 @@ void Stack::Get()
 {
     NodeStack *buf_node = this->head;
 
-    cout << "Элементы стека:" << endl;
+    cout << "\nЭлементы стека:" << endl;
 
     while (buf_node != nullptr)
     {
@@ -588,28 +598,43 @@ void Stack::Get()
 void Stack::Pop()
 {
     cout << "Введите кол-во элементов, которые вы хотите удалить: ";
-    int count; // переменная для хранеения кол-ва
+    string count; // переменная для хранеения кол-ва
 
     // попытка ввода
     try
     {
         cin >> count;
+        for (int i = 0; i < count.length(); i++)
+        {
+            if ((count[i] >= 'A' and count[i] <= 'Z') or(count[i] >= 'a' and count[i] <= 'a'))
+            {
+                throw "Error";
+            }
+        }
     }
     catch(const std::exception& e)
     {
         cout << "Некорректный ввод" << endl;
+        exit(1);
+    }
+    catch(const char*mssg)
+    {
+        cout << "Некорректный ввод" << endl;
+        exit(1);
     }
 
     // если кол-во введено больше, приравниваем его к кол-ву элементов стека
-    if (count > count_elements) count = count_elements;
+    int count1 = 0; // буферный count
+    if (stoi(count) > count_elements) count1 = count_elements;
+    else count1 = stoi(count);
 
     int buf_count = 0; // буферный счетчик
 
-    while (buf_count < count)
+    while (buf_count < count1)
     {
         NodeStack *buf_head = this->head; // создаем буферный указатель
         this->head = this->head->previous; // двигаем начало дальше
-        delete [] buf_head; // удалаяем элементы
+        delete buf_head; // удалаяем элементы
         buf_count++; // увеличиваем счетчик
     }
 }
@@ -626,4 +651,161 @@ void Stack::isEmpty()
     {
         cout << "В списке есть элементы, в кол-ве: " << this->count_elements << endl;
     }
+}
+
+// методы загрузки из файла
+void List::SetL(int number)
+{
+    NodeList *node = new NodeList(number); // создаем новый узел со значением
+
+    // если элемент есть в списке
+   if (this->tail != nullptr)
+    {
+        this->tail->next = node; // устанавливаем указатель на следующий элемент на созданный узел
+    }
+
+    // если элементов нет в списке
+    if (this->head == nullptr)
+    {
+        this->head = node; // указатель на начало устанавливаем на текущую node
+    }
+
+    this->tail = node; // двигаем указатель на конец на новый добавленный элемент
+    this->countEl++;
+}
+
+void Deque::SetL(int number)
+{
+    cout << "Куда добавить элемент?" << endl;
+    cout << "Введите + если в начало \n"
+        << "Введите - если в конец" << endl;
+
+    string symbol; // переменная для ввода выбора
+    try
+    {
+        cin >> symbol; // ввод
+        if (symbol != "+" and symbol != "-") throw "Error";
+    }
+    catch(const std::exception& e)
+    {
+        cout << "Ошибка ввода" << endl;
+        exit(1);
+    }
+    catch(const char*mssg)
+    {
+        cout << "Выбор не верный" << endl;
+        exit(1);
+    }
+
+    // добавление в конец деки
+    if (symbol == "-")
+    {
+        NodeDeque *node = new NodeDeque(number); // создаем новый узел со значением
+
+        // если элемент есть в списке
+        if (this->Rtail != nullptr)
+            {
+                this->Rtail->previous = node; // устанавливаем указатель на следующий элемент на созданный узел
+            }
+
+        // если элементов нет в списке
+        if (this->head == nullptr)
+        {
+            this->head = node; // указатель на начало устанавливаем на текущую node
+        }
+
+        this->Rtail = node; // двигаем указатель на конец на новый добавленный элемент
+    }
+
+    // если добавление в начало
+    else
+    {
+        NodeDeque *node = new NodeDeque(number); // создаем новый узел со значением
+
+        // если указатель на начало указывает на элемент
+        if (Ltail != nullptr)
+        {
+            this->Ltail = node; // указатель на начало устанавливаем на новый элемент
+            this->Ltail->previous = head; // новый начальный элемент будет указывать на прошлый начальный
+        }
+
+        // если еще нет элементов
+        if (head == nullptr)
+        {
+            this->Rtail = node; // указатель на конец на новый элемент
+            this->Ltail = node; // указатель на начало на новый элемент
+        }
+
+        this->head = node; // сдвигаем голову на новый начальный элемент
+    }
+    this->countEl++;
+}
+
+void Stack::SetL(int number)
+{
+    NodeStack *node = new NodeStack(number); // создаем элемент
+    NodeStack *buf_head = this->head; // создаем буфер на начало
+
+    // если уже есть элементы
+    if (head != nullptr)
+    {
+        this->head = node; // двигаем начало на новый элемент
+        this->head->previous = buf_head; // указатель нового элемента указывает на предыдущий
+    }
+
+    // если элементов нет
+    else
+    {
+        this->head = node; // указываем на новый
+        this->head->previous = nullptr; // предыдущий = nullptr
+    }
+
+    this->count_elements++;
+}
+
+// методы определения типа для записи в нужный файл
+void List::GetType()
+{
+    ofstream loadL;
+    loadL.open("list.txt", ios::app);
+
+    NodeList *buf_head = this->head; // устанавливаем буферный указатель на начало списка
+
+    while (buf_head != nullptr) // пока не конец списка
+    {
+        loadL << buf_head->number << endl; // выводим элемент
+        buf_head = buf_head->next; // двигаемся дальше
+    }
+
+    loadL.close();
+}
+void Deque::GetType()
+{
+    ofstream loadD;
+    loadD.open("deque.txt", ios::app);
+
+    NodeDeque *buf_head = this->head; // устанавливаем буферный указатель на начало списка
+
+    while (buf_head != nullptr) // пока не конец списка
+    {
+        loadD << buf_head->number << endl; // выводим элемент
+        buf_head = buf_head->previous; // двигаемся дальше
+    }
+
+    loadD.close();
+}
+void Stack::GetType()
+{
+    ofstream loadS;
+    loadS.open("stack.txt", ios::app);
+
+    NodeStack *buf_node = this->head;
+
+    while (buf_node != nullptr)
+    {
+        loadS << buf_node->number << endl;
+        buf_node = buf_node->previous;
+    }
+
+    loadS.close();
 }

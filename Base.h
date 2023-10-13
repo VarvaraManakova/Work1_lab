@@ -19,6 +19,8 @@ public:
     virtual void Get() = 0; // получить элемент
     virtual void Pop() = 0; // удалить элемент
     virtual void isEmpty() = 0; // проверить на пустоту
+    virtual void SetL(int element) = 0; // метод добавлнеия из файла
+    virtual void GetType() = 0; // запись в файл
 
 };
 
@@ -29,6 +31,7 @@ class List:public BaseQueue
 private:
     NodeList *head; // указатель на начало списка
     NodeList *tail; // указатель, чтобы бегать по списку
+    int countEl;
 
 public:
 // создание конструкторов и деструктора
@@ -42,6 +45,8 @@ public:
     void Get() override; // получить список
     void Pop() override; // удалить число
     void isEmpty() override; // узнать размер
+    void SetL(int element) override; // метод добавлнеия из файла
+    void GetType() override; // запись в файл
 };
 
 class NodeList:public List
@@ -61,6 +66,7 @@ private:
     NodeDeque *head; // указатель на голову
     NodeDeque *Ltail; // указатель на начало
     NodeDeque *Rtail; // указатель на конец
+    int countEl;
 
 public:
 // создание конструкторов и деструктора
@@ -74,6 +80,8 @@ public:
     void Get() override; // получить деку
     void Pop() override; // удалить число
     void isEmpty() override; // узнать размер
+    void SetL(int element) override; // метод добавлнеия из файла
+    void GetType() override; // запись в файл
 };
 
 class NodeDeque:public Deque
@@ -106,6 +114,8 @@ public:
     void Get() override; // получить стек
     void Pop() override; // удалить число
     void isEmpty() override; // узнать размер
+    void SetL(int element) override; // метод добавлнеия из файла
+    void GetType() override; // запись в файл
 };
 
 class NodeStack:public Stack
